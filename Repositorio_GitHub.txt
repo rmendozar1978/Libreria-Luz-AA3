@@ -1,7 +1,8 @@
-EVIDENCIA: GA7-220501096-AA2-EV02 - Módulos de software codificados y probados
-APRENDIZ: Juan Sebastian Avila Patiño
+EVIDENCIA: GA7-220501096-AA3-EV01 - Codificación de módulos del software stand-alone, web y móvil
+APRENDIZ: Ronald Fabian Mendoza Rodriguez
 FICHA: ADSO 3235898
 PROGRAMA: Análisis y Desarrollo de Software
 
-ENLACE DEL REPOSITORIO GITHUB:
-https://github.com/juanavip/Libreria.luz.git
+Repositorio del proyecto Librería Luz - GA7-220501096-AA3
+
+https://github.com/rmendozar1978/Libreria-Luz-AA3.git
