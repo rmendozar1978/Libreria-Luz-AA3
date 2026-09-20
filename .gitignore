@@ -1,0 +1,10 @@
+# Configuración local con credenciales
+src/main/resources/db.properties
+
+# Archivos generados por Maven
+target/
+
+# Archivos temporales de NetBeans
+nbproject/private/
+build/
+dist/
