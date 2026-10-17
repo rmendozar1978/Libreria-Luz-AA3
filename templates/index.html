@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Librería Luz — Sistema de Casa</title>
+  <meta name="description" content="Una librería de barrio, desde 1987. Libros para volver a casa. Venta, renta y préstamo de libros y papelería fina.">
+
+  <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="/" class="brand-group">
+        <div class="brand-badge">
+          <span>L</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Librería Luz</span>
+          <span class="brand-sub">SISTEMA DE CASA</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#mesa" class="nav-link">Catálogo</a>
+        <a href="#lacasa" class="nav-link">La casa</a>
+        <button id="btnOpenAdmin" class="nav-link nav-btn-admin">ACCESO EQUIPO</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO SECTION ================= -->
+    <section class="hero-section">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <span class="hero-eyebrow">— UNA LIBRERÍA DE BARRIO, DESDE 1987</span>
+          <h1 class="hero-title">
+            Libros para<br>
+            <span class="italic-display">volver a casa.</span>
+          </h1>
+          <p class="hero-description">
+            Una selección atenta de narrativa, ensayo y esas historias que esperan el momento preciso para encontrarte.
+          </p>
+          <a href="#mesa" class="hero-cta">
+            Explorar la mesa <span class="cta-arrow">↙</span>
+          </a>
+        </div>
+
+        <div class="hero-visual">
+          <div class="card-stack">
+            <!-- Amber frosted card behind -->
+            <div class="stacked-card card-amber">
+              <div class="amber-badge">L</div>
+              <div class="amber-text">
+                <span class="amber-year">DESDE 1987</span>
+                <span class="amber-loc">EN LA ESQUINA</span>
+              </div>
+            </div>
+
+            <!-- Dark card front -->
+            <div class="stacked-card card-dark" id="heroPromoCard">
+              <div class="card-dark-tag">LUZ / SELECCIÓN 06</div>
+              <h3 class="card-dark-quote">
+                El libro que<br>
+                <span class="italic-serif">te estaba esperando.</span>
+              </h3>
+              <div class="card-dark-footer">
+                <span class="card-dark-hint">Haz clic para descubrirlo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LA MESA DE HOY ================= -->
+    <section class="mesa-section" id="mesa">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="mesa-header">
+          <div class="mesa-titles">
+            <span class="section-eyebrow">LA MESA DE HOY</span>
+            <h2 class="section-title">Encuentra tu próxima lectura</h2>
+          </div>
+
+          <!-- Modality Filter Pills -->
+          <div class="filter-pills" id="modalityFilters">
+            <button class="pill-btn active" data-modality="todo">Todo</button>
+            <button class="pill-btn" data-modality="venta">Venta</button>
+            <button class="pill-btn" data-modality="renta">Renta</button>
+            <button class="pill-btn" data-modality="prestamo">Préstamo</button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar-wrapper">
+          <div class="search-input-box">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Busca por título o autor"
+              autocomplete="off"
+            >
+            <button id="clearSearchBtn" class="clear-search-btn" title="Limpiar búsqueda">&times;</button>
+          </div>
+          <div id="resultsCount" class="results-count">Mostrando 12 de 12 ejemplares</div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="products-grid" id="productsGrid">
+          {% for p in products %}
+          <article class="product-item" data-id="{{ p.id }}" data-category="{{ p.category | lower }}" data-modalities="{{ p.modalities | join(',') }}">
+            <div class="book-cover" onclick="openProductModal({{ p.id }})">
+              <span class="category-tag">{{ p.category | upper }}</span>
+              <div class="cover-content">
+                <h3 class="cover-title">{{ p.title }}</h3>
+              </div>
+              <div class="cover-footer">
+                <span class="cover-author">{{ p.author }}</span>
+              </div>
+              <div class="cover-overlay">
+                <span class="overlay-action">Ver detalle / Adquirir</span>
+              </div>
+            </div>
+
+            <div class="product-meta">
+              <h4 class="product-title" onclick="openProductModal({{ p.id }})">{{ p.title }}</h4>
+              <p class="product-author">{{ p.author }}</p>
+              <div class="product-footer">
+                <span class="product-price">$ {{ "{:,.0f}".format(p.price).replace(',', '.') }}</span>
+                {% if p.stock > 0 %}
+                <span class="product-stock">{{ p.stock }} disponibles</span>
+                {% else %}
+                <span class="product-stock out-of-stock">Agotado</span>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+
+        <!-- Empty State (hidden by default) -->
+        <div id="noResultsState" class="empty-state hidden">
+          <p class="empty-state-title">No encontramos ningún libro o artículo con ese criterio.</p>
+          <p class="empty-state-sub">Prueba con otra palabra o restablece los filtros.</p>
+          <button id="resetFiltersBtn" class="btn-secondary">Restablecer filtros</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LA CASA SECTION ================= -->
+    <section class="lacasa-section" id="lacasa">
+      <div class="container lacasa-container">
+        <div class="lacasa-label-col">
+          <span class="section-eyebrow">LA CASA</span>
+        </div>
+        <div class="lacasa-body-col">
+          <h2 class="lacasa-headline">
+            Un inventario preciso.<br>
+            Una atención humana.
+          </h2>
+          <p class="lacasa-text">
+            Luz nació entre anaqueles y conversaciones largas. Hoy cuidamos cada ejemplar con la misma paciencia: puedes comprarlo, pedirlo prestado o rentarlo por unos días.
+          </p>
+          <div class="category-tags-list" id="categoryTags">
+            <button class="cat-pill" data-category="académico">Académico</button>
+            <button class="cat-pill" data-category="infantil">Infantil</button>
+            <button class="cat-pill" data-category="literatura">Literatura</button>
+            <button class="cat-pill" data-category="oficina">Oficina</button>
+            <button class="cat-pill" data-category="papelería">Papelería</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <div class="brand-badge footer-badge">
+          <span>L</span>
+        </div>
+        <div class="brand-text footer-text">
+          <span class="brand-name">Librería Luz</span>
+          <span class="brand-sub">SISTEMA DE CASA</span>
+        </div>
+      </div>
+      <div class="footer-tagline">
+        UNA ESQUINA PARA QUEDARSE
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODAL DETALLE / ACCIÓN ================= -->
+  <div class="modal-backdrop" id="productModalBackdrop">
+    <div class="modal-dialog" id="productModal">
+      <button class="modal-close-btn" id="btnCloseProductModal">&times;</button>
+      <div class="modal-body-wrapper">
+        <!-- Columna Izquierda: Vista de la cubierta -->
+        <div class="modal-cover-preview" id="modalCoverPreview">
+          <span class="category-tag" id="modalCategoryTag">LITERATURA</span>
+          <div class="cover-content">
+            <h3 class="cover-title" id="modalCoverTitle">Cien años de soledad</h3>
+          </div>
+          <div class="cover-footer">
+            <span class="cover-author" id="modalCoverAuthor">Gabriel García Márquez</span>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Información y Opciones de compra/préstamo -->
+        <div class="modal-details-col">
+          <span class="detail-category" id="modalDetailCategory">LITERATURA</span>
+          <h2 class="detail-title" id="modalDetailTitle">Cien años de soledad</h2>
+          <p class="detail-author" id="modalDetailAuthor">Por Gabriel García Márquez</p>
+
+          <div class="detail-price-row">
+            <span class="detail-price" id="modalDetailPrice">$ 59.000</span>
+            <span class="detail-stock-badge" id="modalDetailStock">7 ejemplares disponibles</span>
+          </div>
+
+          <p class="detail-description" id="modalDetailDesc">
+            Una historia que esperan el momento preciso para encontrarte.
+          </p>
+
+          <hr class="modal-divider">
+
+          <!-- Selector de Modalidad -->
+          <div class="form-group">
+            <label class="form-label">Elige la modalidad para este ejemplar:</label>
+            <div class="modality-radio-group" id="modalityOptionsGroup">
+              <label class="radio-card active" id="radioVenta">
+                <input type="radio" name="modalActionType" value="venta" checked>
+                <div class="radio-card-content">
+                  <span class="radio-title">Comprar</span>
+                  <span class="radio-subtitle" id="ventaPriceSub">Adquisición definitiva</span>
+                </div>
+              </label>
+              <label class="radio-card" id="radioRenta">
+                <input type="radio" name="modalActionType" value="renta">
+                <div class="radio-card-content">
+                  <span class="radio-title">Rentar</span>
+                  <span class="radio-subtitle" id="rentaPriceSub">Lectura por 7 días</span>
+                </div>
+              </label>
+              <label class="radio-card" id="radioPrestamo">
+                <input type="radio" name="modalActionType" value="prestamo">
+                <div class="radio-card-content">
+                  <span class="radio-title">Préstamo</span>
+                  <span class="radio-subtitle">Sin costo para socios</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Días de renta (visible sólo si renta está seleccionada) -->
+          <div class="form-group hidden" id="rentDaysGroup">
+            <label class="form-label">Duración de la renta:</label>
+            <select id="rentDaysSelect" class="form-select">
+              <option value="7">1 semana (7 días)</option>
+              <option value="14">2 semanas (14 días)</option>
+              <option value="21">3 semanas (21 días)</option>
+            </select>
+          </div>
+
+          <!-- Datos del cliente -->
+          <div class="form-group">
+            <label class="form-label">Tu nombre o carnet de lector:</label>
+            <input type="text" id="customerNameInput" class="form-input" placeholder="Ej. Ana María Gómez" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Correo electrónico (para comprobante):</label>
+            <input type="email" id="customerEmailInput" class="form-input" placeholder="ana@ejemplo.com">
+          </div>
+
+          <div class="modal-summary-box">
+            <div class="summary-line">
+              <span id="summaryLabel">Total a pagar:</span>
+              <span class="summary-value" id="summaryTotalValue">$ 59.000</span>
+            </div>
+          </div>
+
+          <button id="btnConfirmAction" class="btn-primary-action">
+            Confirmar adquisición
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL / DRAWER ACCESO EQUIPO ================= -->
+  <div class="modal-backdrop" id="adminModalBackdrop">
+    <div class="admin-drawer" id="adminDrawer">
+      <div class="admin-header">
+        <div>
+          <span class="section-eyebrow">SISTEMA DE CASA</span>
+          <h2 class="admin-title">Acceso Equipo & Inventario</h2>
+        </div>
+        <button class="modal-close-btn" id="btnCloseAdmin">&times;</button>
+      </div>
+
+      <div class="admin-body">
+        <!-- Stats summary -->
+        <div class="stats-grid" id="adminStatsGrid">
+          <div class="stat-card">
+            <span class="stat-val" id="statTotalItems">12</span>
+            <span class="stat-lbl">Títulos</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="statTotalUnits">72</span>
+            <span class="stat-lbl">Unidades</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="statTotalLoans">0</span>
+            <span class="stat-lbl">Préstamos</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="statTotalSales">$ 0</span>
+            <span class="stat-lbl">Ventas registradas</span>
+          </div>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="inventario">Gestionar Stock</button>
+          <button class="admin-tab" data-tab="nuevo">Nuevo Ejemplar</button>
+          <button class="admin-tab" data-tab="historial">Historial</button>
+        </div>
+
+        <!-- Tab 1: Gestión de Stock -->
+        <div class="admin-tab-content active" id="tabInventario">
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Categoría</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="adminProductsTableBody">
+                <!-- Se rellena vía JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="admin-footer-actions">
+            <button id="btnResetCatalog" class="btn-outline-danger">Restaurar inventario inicial</button>
+          </div>
+        </div>
+
+        <!-- Tab 2: Nuevo Ejemplar -->
+        <div class="admin-tab-content" id="tabNuevo">
+          <form id="newProductForm" class="admin-form">
+            <div class="form-group">
+              <label class="form-label">Título de la obra / producto:</label>
+              <input type="text" id="newTitle" class="form-input" required placeholder="Ej. Rayuela">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Autor o Fabricante:</label>
+              <input type="text" id="newAuthor" class="form-input" required placeholder="Ej. Julio Cortázar">
+            </div>
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label class="form-label">Categoría:</label>
+                <select id="newCategory" class="form-select">
+                  <option value="Literatura">Literatura</option>
+                  <option value="Académico">Académico</option>
+                  <option value="Papelería">Papelería</option>
+                  <option value="Oficina">Oficina</option>
+                  <option value="Infantil">Infantil</option>
+                </select>
+              </div>
+              <div class="form-group col-half">
+                <label class="form-label">Precio ($ COP):</label>
+                <input type="number" id="newPrice" class="form-input" required min="0" step="500" value="45000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label class="form-label">Stock inicial:</label>
+                <input type="number" id="newStock" class="form-input" required min="0" value="5">
+              </div>
+              <div class="form-group col-half">
+                <label class="form-label">Modalidades disponibles:</label>
+                <div class="checkbox-group">
+                  <label><input type="checkbox" id="modVenta" checked> Venta</label>
+                  <label><input type="checkbox" id="modRenta" checked> Renta</label>
+                  <label><input type="checkbox" id="modPrestamo" checked> Préstamo</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Breve descripción / Sinopsis:</label>
+              <textarea id="newDescription" class="form-textarea" rows="2" placeholder="Reseña breve para los lectores..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary-action">Guardar en el catálogo</button>
+          </form>
+        </div>
+
+        <!-- Tab 3: Historial de Operaciones -->
+        <div class="admin-tab-content" id="tabHistorial">
+          <div id="recentTxList" class="recent-tx-list">
+            <p class="text-muted">Cargando transacciones recientes...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toastNotification" class="toast-notification"></div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
